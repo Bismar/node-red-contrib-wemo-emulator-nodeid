@@ -147,6 +147,13 @@ module.exports = function (RED) {
 			var nodeDeviceId = null;
 			hubNode.error(`test error`)
 	      		hubNode.warn("test warning")
+
+			hubNode.status({
+			    fill: 'green',
+			    shape: 'ring',
+			    text: 'Setup',
+			});
+			
 			if (typeof msg.payload === 'object') {
 			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 			       nodeDeviceId = msg.payload.nodeid
