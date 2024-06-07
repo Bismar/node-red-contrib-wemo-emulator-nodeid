@@ -180,7 +180,7 @@ module.exports = function (RED) {
                //payloadHandler(hubNode, deviceid);
             // }
 
-							connection = Wemore.Discover(deviceid)
+		connection = Wemore.Discover(deviceid)
 												
             if (connection) {
               if (msg.payload.toLowerCase() == "on") {
@@ -191,24 +191,24 @@ module.exports = function (RED) {
                                     text: 'on',
                                 });
                 }
-                if (msg.payload.toLowerCase() == "off") {
-                  connection.binaryState = 0;
-                                node.status({
-                                    fill: 'green',
-                                    shape: 'circle',
-                                    text: 'off',
-                              });
-                      }
-                      }
-                  }
-     			}
+		if (msg.payload.toLowerCase() == "off") {
+		  connection.binaryState = 0;
+				node.status({
+				    fill: 'green',
+				    shape: 'circle',
+				    text: 'off',
+			      });
+	      	}
+	      }
+	  }
+	}
     }
 
-				RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
-
-				function formatUUID(id) {
-					if (id === null || id === undefined)
-							return '';
-					return ('' + id).replace('.', '').trim();
-			}
+	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
+	
+	function formatUUID(id) {
+		if (id === null || id === undefined)
+				return '';
+		return ('' + id).replace('.', '').trim();
+	}
 };
