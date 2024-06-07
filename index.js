@@ -99,6 +99,7 @@ module.exports = function (RED) {
                     node.send({
                         topic: config.onTopic,
                         payload: config.onPayload,
+                        deviceid: node.id,
                         sender,
                     });
                     node.status({
@@ -112,6 +113,7 @@ module.exports = function (RED) {
                     node.send({
                         topic: config.offTopic,
                         payload: config.offPayload,
+                        deviceid: node.id,
                         sender,
                     });
                     node.status({
