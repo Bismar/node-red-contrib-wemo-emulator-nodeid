@@ -142,10 +142,10 @@ module.exports = function (RED) {
 	function WemoEmuHubNode(config) {
 		RED.nodes.createNode(this, config);
 		const hubNode = this;
-	
+		
 		hubNode.on('input', function(msg) {
 			var nodeDeviceId = null;
-	      
+	      		hubNode.warn('test warning')
 			if (typeof msg.payload === 'object') {
 			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 			       nodeDeviceId = msg.payload.nodeid
