@@ -180,27 +180,27 @@ module.exports = function (RED) {
                //payloadHandler(hubNode, deviceid);
             // }
 
-												connection = Wemore.Discover(deviceid)
+							connection = Wemore.Discover(deviceid)
 												
-												if (connection) {
-															if (msg.payload.toLowerCase() == "on") {
-			            	 connection.binaryState = 1;
-			                            node.status({
-			                                fill: 'green',
-			                                shape: 'dot',
-			                                text: 'on',
-			                            });
-			            }
-			            if (msg.payload.toLowerCase() == "off") {
-			             	connection.binaryState = 0;
-			                            node.status({
-			                                fill: 'green',
-			                                shape: 'circle',
-			                                text: 'off',
-			                          });
-			     							}
-												}
-										}
+            if (connection) {
+              if (msg.payload.toLowerCase() == "on") {
+                   connection.binaryState = 1;
+                                node.status({
+                                    fill: 'green',
+                                    shape: 'dot',
+                                    text: 'on',
+                                });
+                }
+                if (msg.payload.toLowerCase() == "off") {
+                  connection.binaryState = 0;
+                                node.status({
+                                    fill: 'green',
+                                    shape: 'circle',
+                                    text: 'off',
+                              });
+                      }
+                      }
+                  }
      			}
     }
 
