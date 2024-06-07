@@ -180,8 +180,8 @@ module.exports = function (RED) {
 			    // }
 	
 				connection = Wemore.Discover(deviceid)
-				debug(deviceid)
-				debug(connection)
+				hubNode.warn(deviceid)
+				hubNode.warn(connection)
 														
 				if (connection) {
 					if (msg.payload == "on") {
