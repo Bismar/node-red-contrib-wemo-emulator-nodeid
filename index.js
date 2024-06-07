@@ -194,7 +194,7 @@ module.exports = function (RED) {
 						hubNode.warn('Success with Payload.On: ' + msg.payload.on)
 						if (msg.payload.on) {
 							device.setBinaryState(1);
-							hubNode.warn('On payload ' + device.getBinaryState)
+							hubNode.warn('On payload ' + device.getBinaryState())
 							hubNode.status({
 							    fill: 'green',
 							    shape: 'dot',
@@ -202,7 +202,7 @@ module.exports = function (RED) {
 							});
 						} else {
 							device.setBinaryState(0);
-							hubNode.warn('Off payload ' + device.getBinaryState)
+							hubNode.warn('Off payload ' + device.getBinaryState())
 							hubNode.status({
 							    fill: 'green',
 							    shape: 'circle',
