@@ -51,13 +51,13 @@ module.exports = function (RED) {
     // https://github.com/biddster/node-red-contrib-wemo-emulator/issues/8
     process.setMaxListeners(0);
 
-    RED.nodes.registerType('wemo-emulator', function (config) {
+    RED.nodes.registerType('wemo-emulator-nodeid', function (config) {
         RED.nodes.createNode(this, config);
         const node = this;
         const globalConfig = { debug: false };
 
         const getGlobalConfig = function () {
-            return _.assign(globalConfig, node.context().global.get('wemo-emulator'));
+            return _.assign(globalConfig, node.context().global.get('wemo-emulator-nodeid'));
         };
 
         const debug = function (args) {
