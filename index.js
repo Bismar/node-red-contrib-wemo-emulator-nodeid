@@ -154,8 +154,7 @@ module.exports = function (RED) {
 			
 			if (typeof msg.payload === 'object') {
 			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
-			       nodeDeviceId = msg.payload.nodeid
-				hubNode.warn(nodeDeviceId)	
+			       nodeDeviceId = msg.payload.nodeid	
 			       delete msg.payload['nodeid'];
 			     } else {
 				if ('nodename' in msg.payload && msg.payload.nodename !== null) {
@@ -171,7 +170,7 @@ module.exports = function (RED) {
 	 
 			if (config.processinput > 0 && nodeDeviceId !== null) {
 				var deviceid = formatUUID(nodeDeviceId);
-				hubNode.warn('trimmed id ' + deviceid)
+				hubNode.warn('Trimmed id ' + deviceid)
 				var meta = {
 				       insert: {
 					 by: 'input',
@@ -188,10 +187,10 @@ module.exports = function (RED) {
 			    // }
 				hubNode.warn('Pre-discover')	
 				connection = Wemore.Discover(deviceid)
-				hubNode.error('By deviceid ' + connection.binaryState)
+				hubNode.error('By deviceid ' + connection.getBinaryState)
 
 				connection = Wemore.Discover('Bathroom Fan')
-				hubNode.error('By Name ' + connection.binaryState)
+				hubNode.error('By Name ' + connection.getBinaryState)
 														
 				if (connection) {
 					if (msg.payload.on) {
