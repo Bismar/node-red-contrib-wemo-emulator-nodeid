@@ -186,36 +186,37 @@ module.exports = function (RED) {
 			       //payloadHandler(hubNode, deviceid);
 			    // }
 				hubNode.warn('Pre-discover')	
-				connection = Wemore.Discover(deviceid)
-				hubNode.error('By deviceid ' + connection.getBinaryState)
+				//connection = Wemore.Discover(deviceid)
+				//hubNode.error('By deviceid ' + connection)
 
 				connection = Wemore.Discover('Bathroom Fan')
-				hubNode.error('By Name ' + connection.getBinaryState)
-														
-				if (connection) {
-					if (msg.payload.on) {
-						connection.binaryState = 1;
+					.then(function() {
+						hubNode.warn('Success')
+						if (msg.payload.on) {
+							connection.binaryState = 1;
+							hubNode.status({
+							    fill: 'green',
+							    shape: 'dot',
+							    text: 'on',
+							});
+						}
+						if (msg.payload.on) {
+							connection.binaryState = 0;
+							hubNode.status({
+							    fill: 'green',
+							    shape: 'circle',
+							    text: 'off',
+							});
+						}
+					})
+					.fail(function(err) {
+						hubNode.error('Error ' + err)
 						hubNode.status({
-						    fill: 'green',
-						    shape: 'dot',
-						    text: 'on',
-						});
-					}
-					if (msg.payload.on) {
-						connection.binaryState = 0;
-						hubNode.status({
-						    fill: 'green',
-						    shape: 'circle',
-						    text: 'off',
-						});
-					}
-				} else {
-					hubNode.status({
 						  fill: 'red',
 						  shape: 'ring',
 						  text: 'Unable to find deviceID ' + deviceid
+						});
 					});
-				}
 			}
 		});
 	}
