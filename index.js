@@ -192,6 +192,8 @@ module.exports = function (RED) {
 				connection = Wemore.Discover('Bathroom Fan')
 					.then(function(device) {
 						hubNode.warn('Success with Payload.On: ' + msg.payload.on)
+						hubNode.warn('Current Binary State: ' + device.binaryState)
+						
 						if (msg.payload.on) {
 							device.setBinaryState(1);
 							hubNode.warn('On payload ' + device.getBinaryState())
