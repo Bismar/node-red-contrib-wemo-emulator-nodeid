@@ -207,7 +207,7 @@ module.exports = function (RED) {
 					});
 				}
 			}
-		}
+		});
 	}
 
 	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
