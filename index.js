@@ -157,6 +157,7 @@ module.exports = function (RED) {
 			if (typeof msg.payload === 'object') {
 			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 			       nodeDeviceId = msg.payload.nodeid
+				hubNode.warn(nodeDeviceId)	
 			       delete msg.payload['nodeid'];
 			     } else {
 				if ('nodename' in msg.payload && msg.payload.nodename !== null) {
@@ -187,8 +188,8 @@ module.exports = function (RED) {
 			       //payloadHandler(hubNode, deviceid);
 			    // }
 	
-				connection = Wemore.Discover(deviceid)
-				hubNode.warn(deviceid)
+				connection = Wemore.Discover(nodeDeviceId)
+				
 				hubNode.warn(connection)
 														
 				if (connection) {
