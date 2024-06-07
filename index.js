@@ -183,7 +183,7 @@ module.exports = function (RED) {
 				connection = Wemore.Discover(deviceid)
 														
 				if (connection) {
-					if (msg.payload.toLowerCase() == "on") {
+					if (msg.payload == "on") {
 						connection.binaryState = 1;
 						hubNode.status({
 						    fill: 'green',
@@ -191,7 +191,7 @@ module.exports = function (RED) {
 						    text: 'on',
 						});
 					}
-					if (msg.payload.toLowerCase() == "off") {
+					if (msg.payload == "off") {
 						connection.binaryState = 0;
 						hubNode.status({
 						    fill: 'green',
