@@ -1,3 +1,6 @@
+# Forked from node-red-contrib-wemo-emulator
+Includes node.id as msg.deviceid like Amazon Echo Hub nodes.
+
 # node-red-contrib-wemo-emulator
 
 **NOTE** if you're upgrading from a version prior to 1.0.0, it is recommended that you get Alexa to forget all devices and rediscover. This is due to the fix to prevent duplicated wemo-emulator devices appearing in the Alexa app.
