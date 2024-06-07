@@ -1,6 +1,6 @@
 {
     "name": "node-red-contrib-wemo-emulator-nodeid",
-    "version": "1.1",
+    "version": "1.1.0",
     "main": "index.js",
     "keywords": [
         "node-red",
