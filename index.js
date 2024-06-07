@@ -51,8 +51,9 @@ module.exports = function (RED) {
     // https://github.com/biddster/node-red-contrib-wemo-emulator/issues/8
     process.setMaxListeners(0);
 
-    RED.nodes.registerType('wemo-emulator-nodeid', function (config) {
+    function WemoEmuDeviceNode(config){
         RED.nodes.createNode(this, config);
+     
         const node = this;
         const globalConfig = { debug: false };
 
@@ -132,5 +133,82 @@ module.exports = function (RED) {
             // d.dispose();
             debug('Closed');
         });
-    });
+    }
+
+    RED.nodes.registerType('wemo-emulator-nodeid', WemoEmuDeviceNode, {});
+
+    // Hub Function adopted from node-red-contrib-amazon-echo https://github.com/datech/node-red-contrib-amazon-echo/blob/master
+ 
+    function WemoEmuHubNode(config) {
+       	RED.nodes.createNode(this, config);
+        const hubNode = this;
+        connection = Wemore.Discover(config)
+     
+        hubNode.on('input', function(msg) {
+           var nodeDeviceId = null;
+      
+           if (typeof msg.payload === 'object') {
+             if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
+               nodeDeviceId = msg.payload.nodeid
+               delete msg.payload['nodeid'];
+             } else {
+               if ('nodename' in msg.payload && msg.payload.nodename !== null) {
+                 getDevices().forEach(function(device) {
+                   if (msg.payload.nodename == device.name) {
+                     nodeDeviceId = device.id
+                     delete msg.payload['nodename'];
+                   }
+                 });
+               }
+             }
+           }
+ 
+           if (config.processinput > 0 && nodeDeviceId !== null) {
+             var deviceid = formatUUID(nodeDeviceId);
+             var meta = {
+               insert: {
+                 by: 'input',
+                 details: {}
+               }
+             }
+             //var deviceAttributes = setDeviceAttributes(deviceid, msg.payload, meta, hubNode.context());
+     
+             // Output if
+             // 'Process and output' OR
+             // 'Process and output on state change' option is selected
+             //if (config.processinput == 2 || (config.processinput == 3 && Object.keys(deviceAttributes.meta.changes).length > 0)) {
+               //payloadHandler(hubNode, deviceid);
+            // }
+
+												connection = Wemore.Discover(deviceid)
+												
+												if (connection) {
+															if (msg.payload.toLowerCase() == "on") {
+			            	 connection.binaryState = 1;
+			                            node.status({
+			                                fill: 'green',
+			                                shape: 'dot',
+			                                text: 'on',
+			                            });
+			            }
+			            if (msg.payload.toLowerCase() == "off") {
+			             	connection.binaryState = 0;
+			                            node.status({
+			                                fill: 'green',
+			                                shape: 'circle',
+			                                text: 'off',
+			                          });
+			     							}
+												}
+										}
+     			}
+    }
+
+				RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
+
+				function formatUUID(id) {
+					if (id === null || id === undefined)
+							return '';
+					return ('' + id).replace('.', '').trim();
+			}
 };
