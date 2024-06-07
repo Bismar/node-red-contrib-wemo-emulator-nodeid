@@ -51,158 +51,164 @@ module.exports = function (RED) {
     // https://github.com/biddster/node-red-contrib-wemo-emulator/issues/8
     process.setMaxListeners(0);
 
-    function WemoEmuDeviceNode(config){
-        RED.nodes.createNode(this, config);
-     
-        const node = this;
-        const globalConfig = { debug: false };
+    	function WemoEmuDeviceNode(config){
+	        RED.nodes.createNode(this, config);
+	     
+	        const node = this;
+	        const globalConfig = { debug: false };
+	
+	        const getGlobalConfig = function () {
+	            return _.assign(globalConfig, node.context().global.get('wemo-emulator-nodeid'));
+	        };
+	
+	        const debug = function (args) {
+	            if (getGlobalConfig().debug) {
+	                node.log(...args);
+	            }
+	        };
+	
+	        // Address in use errors occur when ports clash. They stop node dead so we use a domain to notify the user.
+	        // Otherwise NodeRED won't start and that's hard to debug.
+	        // Note that domains are deprecated in v7. So we'll have to port to whatever replaces them in the future.
+	        const d = Domain.create();
+	
+	        d.on('error', (e) => {
+	            node.error(`Emulation error: ${e.message}`, e);
+	            node.status({
+	                fill: 'red',
+	                shape: 'dot',
+	                text: e.message,
+	            });
+	        });
+	
+	        let connection = null;
+	        d.run(() => {
+	            config.uuid = uuidFromSerial(config.serial);
+	            debug(`UUID [${config.serial}] => [${config.uuid}]`);
+	            // console.log(config.uuid);
+	            // {friendlyName: "TV", port: 9001, serial: 'a unique id'}
+	            connection = Wemore.Emulate(config)
+	                .on('listening', function () {
+	                    node.status({
+	                        fill: 'yellow',
+	                        shape: 'dot',
+	                        text: `Listen on ${this.port}`,
+	                    });
+	                    debug(`Listening on: ${this.port}`);
+	                })
+	                .on('on', (_self, sender) => {
+	                    node.send({
+	                        topic: config.onTopic,
+	                        payload: config.onPayload,
+	                        deviceid: node.id,
+	                        sender,
+	                    });
+	                    node.status({
+	                        fill: 'green',
+	                        shape: 'dot',
+	                        text: 'on',
+	                    });
+	                    debug('Turning on');
+	                })
+	                .on('off', (_self, sender) => {
+	                    node.send({
+	                        topic: config.offTopic,
+	                        payload: config.offPayload,
+	                        deviceid: node.id,
+	                        sender,
+	                    });
+	                    node.status({
+	                        fill: 'green',
+	                        shape: 'circle',
+	                        text: 'off',
+	                    });
+	                    debug('Turning off');
+	                });
+	        });
+	
+	        node.on('close', () => {
+	            debug('Closing connection');
+	            connection.close();
+	            // debug('Closing domain');
+	            // d.dispose();
+	            debug('Closed');
+	        });
+    	}
 
-        const getGlobalConfig = function () {
-            return _.assign(globalConfig, node.context().global.get('wemo-emulator-nodeid'));
-        };
+    	RED.nodes.registerType('wemo-emulator-nodeid', WemoEmuDeviceNode, {});
 
-        const debug = function (args) {
-            if (getGlobalConfig().debug) {
-                node.log(...args);
-            }
-        };
-
-        // Address in use errors occur when ports clash. They stop node dead so we use a domain to notify the user.
-        // Otherwise NodeRED won't start and that's hard to debug.
-        // Note that domains are deprecated in v7. So we'll have to port to whatever replaces them in the future.
-        const d = Domain.create();
-
-        d.on('error', (e) => {
-            node.error(`Emulation error: ${e.message}`, e);
-            node.status({
-                fill: 'red',
-                shape: 'dot',
-                text: e.message,
-            });
-        });
-
-        let connection = null;
-        d.run(() => {
-            config.uuid = uuidFromSerial(config.serial);
-            debug(`UUID [${config.serial}] => [${config.uuid}]`);
-            // console.log(config.uuid);
-            // {friendlyName: "TV", port: 9001, serial: 'a unique id'}
-            connection = Wemore.Emulate(config)
-                .on('listening', function () {
-                    node.status({
-                        fill: 'yellow',
-                        shape: 'dot',
-                        text: `Listen on ${this.port}`,
-                    });
-                    debug(`Listening on: ${this.port}`);
-                })
-                .on('on', (_self, sender) => {
-                    node.send({
-                        topic: config.onTopic,
-                        payload: config.onPayload,
-                        deviceid: node.id,
-                        sender,
-                    });
-                    node.status({
-                        fill: 'green',
-                        shape: 'dot',
-                        text: 'on',
-                    });
-                    debug('Turning on');
-                })
-                .on('off', (_self, sender) => {
-                    node.send({
-                        topic: config.offTopic,
-                        payload: config.offPayload,
-                        deviceid: node.id,
-                        sender,
-                    });
-                    node.status({
-                        fill: 'green',
-                        shape: 'circle',
-                        text: 'off',
-                    });
-                    debug('Turning off');
-                });
-        });
-
-        node.on('close', () => {
-            debug('Closing connection');
-            connection.close();
-            // debug('Closing domain');
-            // d.dispose();
-            debug('Closed');
-        });
-    }
-
-    RED.nodes.registerType('wemo-emulator-nodeid', WemoEmuDeviceNode, {});
-
-    // Hub Function adopted from node-red-contrib-amazon-echo https://github.com/datech/node-red-contrib-amazon-echo/blob/master
- 
-    function WemoEmuHubNode(config) {
-       	RED.nodes.createNode(this, config);
-        const hubNode = this;
-        connection = Wemore.Discover(config)
-     
-        hubNode.on('input', function(msg) {
-           var nodeDeviceId = null;
-      
-           if (typeof msg.payload === 'object') {
-             if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
-               nodeDeviceId = msg.payload.nodeid
-               delete msg.payload['nodeid'];
-             } else {
-               if ('nodename' in msg.payload && msg.payload.nodename !== null) {
-                 getDevices().forEach(function(device) {
-                   if (msg.payload.nodename == device.name) {
-                     nodeDeviceId = device.id
-                     delete msg.payload['nodename'];
-                   }
-                 });
-               }
-             }
-           }
- 
-           if (config.processinput > 0 && nodeDeviceId !== null) {
-             var deviceid = formatUUID(nodeDeviceId);
-             var meta = {
-               insert: {
-                 by: 'input',
-                 details: {}
-               }
-             }
-             //var deviceAttributes = setDeviceAttributes(deviceid, msg.payload, meta, hubNode.context());
-     
-             // Output if
-             // 'Process and output' OR
-             // 'Process and output on state change' option is selected
-             //if (config.processinput == 2 || (config.processinput == 3 && Object.keys(deviceAttributes.meta.changes).length > 0)) {
-               //payloadHandler(hubNode, deviceid);
-            // }
-
-		connection = Wemore.Discover(deviceid)
-												
-            if (connection) {
-              if (msg.payload.toLowerCase() == "on") {
-                   connection.binaryState = 1;
-                                node.status({
-                                    fill: 'green',
-                                    shape: 'dot',
-                                    text: 'on',
-                                });
-                }
-		if (msg.payload.toLowerCase() == "off") {
-		  connection.binaryState = 0;
-				node.status({
-				    fill: 'green',
-				    shape: 'circle',
-				    text: 'off',
-			      });
-	      	}
-	      }
-	  }
+	// Hub Function adopted from node-red-contrib-amazon-echo https://github.com/datech/node-red-contrib-amazon-echo/blob/master
+	
+	function WemoEmuHubNode(config) {
+		RED.nodes.createNode(this, config);
+		const hubNode = this;
+		connection = Wemore.Discover(config)
+	
+		hubNode.on('input', function(msg) {
+			var nodeDeviceId = null;
+	      
+			if (typeof msg.payload === 'object') {
+			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
+			       nodeDeviceId = msg.payload.nodeid
+			       delete msg.payload['nodeid'];
+			     } else {
+				if ('nodename' in msg.payload && msg.payload.nodename !== null) {
+					 getDevices().forEach(function(device) {
+					   if (msg.payload.nodename == device.name) {
+					     nodeDeviceId = device.id
+					     delete msg.payload['nodename'];
+					   }
+					 });
+				}
+			     }
+			}
+	 
+			if (config.processinput > 0 && nodeDeviceId !== null) {
+				var deviceid = formatUUID(nodeDeviceId);
+				var meta = {
+				       insert: {
+					 by: 'input',
+					 details: {}
+				       }
+				}
+			     //var deviceAttributes = setDeviceAttributes(deviceid, msg.payload, meta, hubNode.context());
+		     
+			     // Output if
+			     // 'Process and output' OR
+			     // 'Process and output on state change' option is selected
+			     //if (config.processinput == 2 || (config.processinput == 3 && Object.keys(deviceAttributes.meta.changes).length > 0)) {
+			       //payloadHandler(hubNode, deviceid);
+			    // }
+	
+				connection = Wemore.Discover(deviceid)
+														
+				if (connection) {
+					if (msg.payload.toLowerCase() == "on") {
+						connection.binaryState = 1;
+						hubNode.status({
+						    fill: 'green',
+						    shape: 'dot',
+						    text: 'on',
+						});
+					}
+					if (msg.payload.toLowerCase() == "off") {
+						connection.binaryState = 0;
+						hubNode.status({
+						    fill: 'green',
+						    shape: 'circle',
+						    text: 'off',
+						});
+					}
+				} else {
+					hubNode.status({
+						  fill: 'red',
+						  shape: 'ring',
+						  text: 'Unable to find deviceID ' + deviceid
+					});
+				}
+			}
+		}
 	}
-    }
 
 	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
 	
