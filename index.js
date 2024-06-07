@@ -199,8 +199,7 @@ module.exports = function (RED) {
 							    shape: 'dot',
 							    text: 'on',
 							});
-						}
-						if (!msg.payload.on) {
+						} else {
 							connection.binaryState = 0;
 							hubNode.status({
 							    fill: 'green',
