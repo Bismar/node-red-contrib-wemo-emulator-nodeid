@@ -1,6 +1,6 @@
 {
-    "name": "node-red-contrib-wemo-emulator",
-    "version": "1.0.5",
+    "name": "node-red-contrib-wemo-emulator-nodeid",
+    "version": "1.0",
     "main": "index.js",
     "keywords": [
         "node-red",
@@ -11,7 +11,7 @@
         "alexa"
     ],
     "scripts": {
-        "start": "mkdir -p .node-red/node_modules && ln -sf $PWD $PWD/.node-red/node_modules/node-red-contrib-wemo-emulator && node-red -u .node-red",
+        "start": "mkdir -p .node-red/node_modules && ln -sf $PWD $PWD/.node-red/node_modules/node-red-contrib-wemo-emulator-nodeid && node-red -u .node-red",
         "test": "nyc --reporter=html ./node_modules/mocha/bin/mocha test --recursive --reporter spec",
         "update-dependencies": "./node_modules/.bin/ncu -u && npm install",
         "lint": "eslint ."
@@ -24,14 +24,14 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "https://github.com/biddster/node-red-contrib-wemo-emulator.git"
+        "url": "https://github.com/bismar/node-red-contrib-wemo-emulator-nodeid.git"
     },
     "bugs": {
-        "url": "https://github.com/biddster/node-red-contrib-wemo-emulator/issues"
+        "url": "https://github.com/bismar/node-red-contrib-wemo-emulator-nodeid/issues"
     },
     "node-red": {
         "nodes": {
-            "wemo-emulator": "index.js"
+            "wemo-emulator-nodeid": "index.js"
         }
     },
     "devDependencies": {
