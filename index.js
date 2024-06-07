@@ -188,13 +188,13 @@ module.exports = function (RED) {
 			    // }
 				hubNode.warn('Pre-discover')	
 				connection = Wemore.Discover(deviceid)
-				hubNode.error('By deviceid ' + connection)
+				hubNode.error('By deviceid ' + connection.resolve)
 
 				connection = Wemore.Discover('Bathroom Fan')
-				hubNode.error('By Name ' + connection)
+				hubNode.error('By Name ' + connection.resolve)
 														
 				if (connection) {
-					if (msg.payload == "on") {
+					if (msg.payload.on) {
 						connection.binaryState = 1;
 						hubNode.status({
 						    fill: 'green',
@@ -202,7 +202,7 @@ module.exports = function (RED) {
 						    text: 'on',
 						});
 					}
-					if (msg.payload == "off") {
+					if (msg.payload.on) {
 						connection.binaryState = 0;
 						hubNode.status({
 						    fill: 'green',
