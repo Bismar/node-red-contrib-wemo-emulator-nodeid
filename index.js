@@ -200,7 +200,7 @@ module.exports = function (RED) {
 							    text: 'on',
 							});
 						}
-						if (msg.payload.on) {
+						if (!msg.payload.on) {
 							connection.binaryState = 0;
 							hubNode.status({
 							    fill: 'green',
