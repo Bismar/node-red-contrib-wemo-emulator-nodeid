@@ -188,10 +188,10 @@ module.exports = function (RED) {
 			    // }
 				hubNode.warn('Pre-discover')	
 				connection = Wemore.Discover(deviceid)
-				hubNode.error('By deviceid ' + connection.resolve)
+				hubNode.error('By deviceid ' + connection.binaryState)
 
 				connection = Wemore.Discover('Bathroom Fan')
-				hubNode.error('By Name ' + connection.resolve)
+				hubNode.error('By Name ' + connection.binaryState)
 														
 				if (connection) {
 					if (msg.payload.on) {
