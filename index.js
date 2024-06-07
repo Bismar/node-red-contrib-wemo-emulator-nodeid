@@ -192,11 +192,13 @@ module.exports = function (RED) {
 				connection = Wemore.Discover('Bathroom Fan')
 					.then(function(device) {
 						hubNode.warn('Success with Payload.On: ' + msg.payload.on)
-						hubNode.warn('Current Binary State: ' + connection.binaryState)
+						var devState = device.getBinaryState();
+						hubNode.warn('Current payload ' + devState)
 						
 						if (msg.payload.on) {
 							device.setBinaryState(1);
-							hubNode.warn('On payload ' + device.getBinaryState())
+							devState = device.getBinaryState();
+							hubNode.warn('On payload ' + devState)
 							hubNode.status({
 							    fill: 'green',
 							    shape: 'dot',
@@ -204,7 +206,8 @@ module.exports = function (RED) {
 							});
 						} else {
 							device.setBinaryState(0);
-							hubNode.warn('Off payload ' + device.getBinaryState())
+							devState = device.getBinaryState();
+							hubNode.warn('Off payload ' + devState)
 							hubNode.status({
 							    fill: 'green',
 							    shape: 'circle',
