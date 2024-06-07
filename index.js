@@ -145,7 +145,8 @@ module.exports = function (RED) {
 		
 		hubNode.on('input', function(msg) {
 			var nodeDeviceId = null;
-	      		hubNode.warn('test warning')
+			hubNode.error(`test error`)
+	      		hubNode.warn("test warning")
 			if (typeof msg.payload === 'object') {
 			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 			       nodeDeviceId = msg.payload.nodeid
