@@ -145,8 +145,6 @@ module.exports = function (RED) {
 		
 		hubNode.on('input', function(msg) {
 			var nodeDeviceId = null;
-			hubNode.error(`test error`)
-	      		hubNode.warn("test warning")
 
 			hubNode.status({
 			    fill: 'green',
@@ -173,6 +171,7 @@ module.exports = function (RED) {
 	 
 			if (config.processinput > 0 && nodeDeviceId !== null) {
 				var deviceid = formatUUID(nodeDeviceId);
+				hubNode.warn('trimmed id ' + deviceid)
 				var meta = {
 				       insert: {
 					 by: 'input',
@@ -187,10 +186,12 @@ module.exports = function (RED) {
 			     //if (config.processinput == 2 || (config.processinput == 3 && Object.keys(deviceAttributes.meta.changes).length > 0)) {
 			       //payloadHandler(hubNode, deviceid);
 			    // }
-	
-				connection = Wemore.Discover(nodeDeviceId)
-				
-				hubNode.warn(connection)
+				hubNode.warn('Pre-discover')	
+				connection = Wemore.Discover(deviceid)
+				hubNode.error('By deviceid ' + connection)
+
+				connection = Wemore.Discover('Bathroom Fan')
+				hubNode.error('By Name ' + connection)
 														
 				if (connection) {
 					if (msg.payload == "on") {
