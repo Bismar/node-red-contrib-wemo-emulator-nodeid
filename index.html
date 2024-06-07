@@ -23,7 +23,7 @@ THE SOFTWARE.
 -->
 
 <script type="text/javascript">
-    RED.nodes.registerType('wemo-emulator', {
+    RED.nodes.registerType('wemo-emulator-nodeid', {
         category: 'input',
         color: '#f37a33',
         defaults: {
@@ -56,14 +56,14 @@ THE SOFTWARE.
         outputs: 1,
         icon: 'wemo.png',
         label: function() {
-            return this.name || 'wemo-emulator';
+            return this.name || 'wemo-emulator-nodeid';
         },
         paletteLabel: 'wemo emu',
         align: 'left'
     });
 </script>
 
-<script type="text/x-red" data-template-name="wemo-emulator">
+<script type="text/x-red" data-template-name="wemo-emulator-nodeid">
 
     <div class="form-row">
         <label for="node-input-name">
@@ -113,8 +113,8 @@ THE SOFTWARE.
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="wemo-emulator">
-    <h1>Wemo Emulator</h1>
+<script type="text/x-red" data-help-name="wemo-emulator-nodeid">
+    <h1>Wemo Emulator-nodeid</h1>
     <p><em>NOTE</em> if you're upgrading from a version prior to 1.0.0, it is recommended that you get Alexa to forget all devices and rediscover. This is due to the fix to prevent duplicated wemo-emulator devices appearing in the Alexa app.</p>
     <p> Why might you want to emulate Wemo? Well I wanted to be able to control my Node-RED Raspberry Pi using my Amazon Echo.
         The Echo has Wemo support built in so I thought I'd give it a try.
