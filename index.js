@@ -190,17 +190,17 @@ module.exports = function (RED) {
 				//hubNode.error('By deviceid ' + connection)
 
 				connection = Wemore.Discover('Bathroom Fan')
-					.then(function() {
+					.then(function(device) {
 						hubNode.warn('Success with Payload.On: ' + msg.payload.on)
 						if (msg.payload.on) {
-							connection.binaryState = 1;
+							device.setBinaryState(1);
 							hubNode.status({
 							    fill: 'green',
 							    shape: 'dot',
 							    text: 'on',
 							});
 						} else {
-							connection.binaryState = 0;
+							device.setBinaryState(0);
 							hubNode.status({
 							    fill: 'green',
 							    shape: 'circle',
