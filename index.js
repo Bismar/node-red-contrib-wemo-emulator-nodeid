@@ -142,7 +142,6 @@ module.exports = function (RED) {
 	function WemoEmuHubNode(config) {
 		RED.nodes.createNode(this, config);
 		const hubNode = this;
-		connection = Wemore.Discover(config)
 	
 		hubNode.on('input', function(msg) {
 			var nodeDeviceId = null;
@@ -181,6 +180,8 @@ module.exports = function (RED) {
 			    // }
 	
 				connection = Wemore.Discover(deviceid)
+				debug(deviceid)
+				debug(connection)
 														
 				if (connection) {
 					if (msg.payload == "on") {
