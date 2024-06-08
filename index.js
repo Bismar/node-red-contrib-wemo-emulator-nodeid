@@ -154,6 +154,8 @@ module.exports = function (RED) {
 			
 			if (typeof msg.payload === 'object') {
 				hubNode.warn('Device ID: ' + msg.payload.nodeid)
+				hubNode.warn('Payload.On: ' + msg.payload.on)
+				
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 				       nodeDeviceNm = getDeviceNm(msg.payload.nodeid);
 				       delete msg.payload['nodeid'];
@@ -170,7 +172,6 @@ module.exports = function (RED) {
 		if (config.processinput > 0 && nodeDeviceNm !== null) {
 			connection = Wemore.Discover(nodeDeviceNm)
 				.then(function(device) {
-					hubNode.warn('Success with Payload.On: ' + msg.payload.on)
 					device.getBinaryState()
 						.then(function(devState){
 							hubNode.warn('Current payload ' + devState)
