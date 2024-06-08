@@ -142,7 +142,7 @@ module.exports = function (RED) {
 	function WemoEmuHubNode(config) {
 		RED.nodes.createNode(this, config);
 		const hubNode = this;
-		//hubNode.warn('IP Address: ' + env.get("HOST"))
+
 		hubNode.on('input', function(msg) {
 			var nodeDeviceNm = null;
 			
@@ -176,6 +176,8 @@ module.exports = function (RED) {
 			if (config.processinput > 0 && nodeDeviceNm !== null) {
 				connection = Wemore.Discover(nodeDeviceNm)
 					.then(function(device) {
+						hubNode.warn('IP Address: ' + connection.host)
+						hubNode.warn('IP Address: ' + device.host)
 						device.getBinaryState()
 							.then(function(devState){
 								hubNode.warn('Current payload: ' + devState)
