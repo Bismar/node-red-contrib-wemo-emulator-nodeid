@@ -155,10 +155,17 @@ module.exports = function (RED) {
 			if (typeof msg.payload === 'object') {
 				hubNode.warn('Device ID: ' + msg.payload.nodeid)
 				hubNode.warn('Payload.On: ' + msg.payload.on)
-				
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
-				       	nodeDeviceNm = getDeviceNm(msg.payload.nodeid)
-				       	delete msg.payload['nodeid'];
+					getDevicesNms().forEach(function(device) {
+						hubNode.warn('Devices Listing: ' + device.name)
+						if (msg.payload.nodeid == device.id) {
+							nodeDeviceNm = device.name
+							hubNode.warn('Device Found: ' + device.name)
+							delete msg.payload['nodeid'];
+						}
+					});
+				       	//nodeDeviceNm = getDeviceNm(msg.payload.nodeid)
+				       	
 			    	} else {
 					if ('nodename' in msg.payload && msg.payload.nodename !== null) {
 						nodeDeviceNm = msg.payload.nodename
@@ -212,29 +219,28 @@ module.exports = function (RED) {
 	
 	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
 
-	function formatUUID(id) {
-		if (id === null || id === undefined){return '';}
-		return ('' + id).replace('.', '').trim();
-	}
-
 	function getDeviceNm(id) {
 		if (id === null || id === undefined) {return '';}
 		var rtnNm = null
 		
 		RED.nodes.eachNode(function(node) {
-			this.warn('Test wemo-emulator-nodeid Node Names: ' + node.name)
 			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {
 				rtnNm = node.name
 				return rtnNm;
 			}
 		});
 	}
+
+	function formatUUID(id) {
+		if (id === null || id === undefined){return '';}
+		return ('' + id).replace('.', '').trim();
+	}
 	
 	function getDevicesNms() {
 		var devices = [];
 		
 		RED.nodes.eachNode(function(node) {
-			if (node.type == 'amazon-echo-device') {
+			if (node.type == 'wemo-emulator-nodeid') {
 				devices.push({
 					  id: formatUUID(node.id),
 					  name: node.name
