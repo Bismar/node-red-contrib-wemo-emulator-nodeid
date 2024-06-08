@@ -157,15 +157,12 @@ module.exports = function (RED) {
 				hubNode.warn('Payload.On: ' + msg.payload.on)
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 					getDevicesNms().forEach(function(device) {
-						hubNode.warn('Devices Listing: ' + device.name)
+						//hubNode.warn('Devices Listing: ' + device.name)
 						if (msg.payload.nodeid == device.id) {
 							nodeDeviceNm = device.name
-							hubNode.warn('Device Found: ' + device.name)
 							delete msg.payload['nodeid'];
 						}
 					});
-				       	//nodeDeviceNm = getDeviceNm(msg.payload.nodeid)
-				       	
 			    	} else {
 					if ('nodename' in msg.payload && msg.payload.nodename !== null) {
 						nodeDeviceNm = msg.payload.nodename
@@ -173,20 +170,21 @@ module.exports = function (RED) {
 					}
 				}
 			}
-			hubNode.warn('Device Name: ' + nodeDeviceNm)
+
+			hubNode.warn('Device Nane: ' + nodeDeviceNm)
 
 			if (config.processinput > 0 && nodeDeviceNm !== null) {
 				connection = Wemore.Discover(nodeDeviceNm)
 					.then(function(device) {
 						device.getBinaryState()
 							.then(function(devState){
-								hubNode.warn('Current payload ' + devState)
+								hubNode.warn('Current payload: ' + devState)
 							});
 						
 						if (msg.payload.on) {
 							device.setBinaryState(1);
 							device.getBinaryState().then(function(devState){
-								hubNode.warn('On payload ' + devState)
+								hubNode.warn('On payload: ' + devState)
 							});
 							hubNode.status({
 							    fill: 'green',
@@ -196,7 +194,7 @@ module.exports = function (RED) {
 						} else {
 							device.setBinaryState(0);
 							device.getBinaryState().then(function(devState){
-								hubNode.warn('Off payload ' + devState)
+								hubNode.warn('Off payload: ' + devState)
 							});
 							hubNode.status({
 							    fill: 'green',
@@ -219,18 +217,6 @@ module.exports = function (RED) {
 	
 	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
 
-	function getDeviceNm(id) {
-		if (id === null || id === undefined) {return '';}
-		var rtnNm = null
-		
-		RED.nodes.eachNode(function(node) {
-			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {
-				rtnNm = node.name
-				return rtnNm;
-			}
-		});
-	}
-
 	function formatUUID(id) {
 		if (id === null || id === undefined){return '';}
 		return ('' + id).replace('.', '').trim();
@@ -238,7 +224,6 @@ module.exports = function (RED) {
 	
 	function getDevicesNms() {
 		var devices = [];
-		
 		RED.nodes.eachNode(function(node) {
 			if (node.type == 'wemo-emulator-nodeid') {
 				devices.push({
@@ -247,7 +232,6 @@ module.exports = function (RED) {
 				});
 			}
 		});
-		
 		return devices;
 	}
 };
