@@ -145,7 +145,6 @@ module.exports = function (RED) {
 		
 		hubNode.on('input', function(msg) {
 			var nodeDeviceNm = null;
-			hubNode.warn('Hub Node Function Entered')
 			
 			hubNode.status({
 			    fill: 'green',
@@ -223,7 +222,7 @@ module.exports = function (RED) {
 		var rtnNm = null
 		
 		RED.nodes.eachNode(function(node) {
-			node.warn('Test wemo-emulator-nodeid Node Names: ' + node.name)
+			this.warn('Test wemo-emulator-nodeid Node Names: ' + node.name)
 			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {
 				rtnNm = node.name
 				return rtnNm;
