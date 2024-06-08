@@ -145,7 +145,8 @@ module.exports = function (RED) {
 		
 		hubNode.on('input', function(msg) {
 			var nodeDeviceNm = null;
-
+			hubNode.warn('Hub Node Function Entered')
+			
 			hubNode.status({
 			    fill: 'green',
 			    shape: 'ring',
