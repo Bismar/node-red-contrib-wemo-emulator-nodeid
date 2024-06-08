@@ -98,7 +98,7 @@ module.exports = function (RED) {
 	                })
 	                .on('on', (_self, sender) => {
 				node.warn('Host IP: ' + connection.host)
-				node.warn('Calling IP: ' + sender.address.substr(7))
+				node.warn('Calling IP: ' + sender.address.substr(7) + ":" + sender.port)
 				
 			    	if (connection.host !== sender.address.substr(7)){
 					node.send({
@@ -117,7 +117,7 @@ module.exports = function (RED) {
 	                })
 	                .on('off', (_self, sender) => {
 				node.warn('Host IP: ' + connection.host)
-				node.warn('Calling IP: ' + sender.address.substr(7))
+				node.warn('Calling IP: ' + sender.address.substr(7) + ":" + sender.port)
 
 				if (connection.host !== sender.address.substr(7)){
 		                    	node.send({
