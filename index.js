@@ -24,32 +24,32 @@
  */
 
 module.exports = function (RED) {
-    const Wemore = require('wemore');
-    const Domain = require('domain');
-    const _ = require('lodash');
-    const Crypto = require('crypto');
+    	const Wemore = require('wemore');
+    	const Domain = require('domain');
+    	const _ = require('lodash');
+    	const Crypto = require('crypto');
 
-    const uuidFromSerial = function (serial) {
-        // Many thanks to https://github.com/lspiehler/node-fauxmo/blob/master/src/deviceSerial.js
-        const rawserial = Crypto.createHash('md5').update(serial).digest('hex');
-        return (
-            // eslint-disable-next-line prefer-template
-            rawserial.substring(0, 8) +
-            '-' +
-            rawserial.substring(8, 12) +
-            '-' +
-            rawserial.substring(12, 16) +
-            '-' +
-            rawserial.substring(16, 20) +
-            '-' +
-            rawserial.substring(20, 32)
-        );
-    };
+    	const uuidFromSerial = function (serial) {
+        	// Many thanks to https://github.com/lspiehler/node-fauxmo/blob/master/src/deviceSerial.js
+        	const rawserial = Crypto.createHash('md5').update(serial).digest('hex');
+        	return (
+            	// eslint-disable-next-line prefer-template
+            	rawserial.substring(0, 8) +
+            	'-' +
+            	rawserial.substring(8, 12) +
+           	'-' +
+            	rawserial.substring(12, 16) +
+            	'-' +
+            	rawserial.substring(16, 20) +
+            	'-' +
+            	rawserial.substring(20, 32)
+        	);
+    	};
 
-    // For each wemore.Emulate we create, wemore registers a process exit listener. By default, node
-    // only supports 10 exit listeners and we are likely to want to emulate many more devices than that.
-    // https://github.com/biddster/node-red-contrib-wemo-emulator/issues/8
-    process.setMaxListeners(0);
+    	// For each wemore.Emulate we create, wemore registers a process exit listener. By default, node
+    	// only supports 10 exit listeners and we are likely to want to emulate many more devices than that.
+    	// https://github.com/biddster/node-red-contrib-wemo-emulator/issues/8
+    	process.setMaxListeners(0);
 
     	function WemoEmuDeviceNode(config){
 	        RED.nodes.createNode(this, config);
@@ -223,36 +223,35 @@ module.exports = function (RED) {
 						});
 					});
 			}
-		});
-	}
-
-	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
+		}
 	
-	function formatUUID(id) {
-		if (id === null || id === undefined){return ''}
-		return ('' + id).replace('.', '').trim();
-	}
-
-	function getDeviceNm(id) {
-		if (id === null || id === undefined) {return ''}
-		
-		RED.nodes.eachNode(function(node) {
-			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name}
-		});
-	}
+		RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
 	
-	function getDevicesNms() {
-		var devices = [];
+		function formatUUID(id) {
+			if (id === null || id === undefined){return ''}
+			return ('' + id).replace('.', '').trim();
+		}
+	
+		function getDeviceNm(id) {
+			if (id === null || id === undefined) {return ''}
+			
+			RED.nodes.eachNode(function(node) {
+				if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name}
+			});
+		}
 		
-		RED.nodes.eachNode(function(node) {
-			if (node.type == 'amazon-echo-device') {
-				devices.push({
-					  id: formatUUID(node.id),
-					  name: node.name
-				});
-			}
-		});
-		
-		return devices;
-	}
+		function getDevicesNms() {
+			var devices = [];
+			
+			RED.nodes.eachNode(function(node) {
+				if (node.type == 'amazon-echo-device') {
+					devices.push({
+						  id: formatUUID(node.id),
+						  name: node.name
+					});
+				}
+			});
+			
+			return devices;
+		}
 };
