@@ -158,57 +158,57 @@ module.exports = function (RED) {
 				hubNode.warn('Payload.On: ' + msg.payload.on)
 				
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
-				       nodeDeviceNm = getDeviceNm(msg.payload.nodeid);
-				       delete msg.payload['nodeid'];
+				       	nodeDeviceNm = getDeviceNm(msg.payload.nodeid)
+				       	delete msg.payload['nodeid'];
 			    	} else {
 					if ('nodename' in msg.payload && msg.payload.nodename !== null) {
-					     nodeDeviceNm = msg.payload.nodename;
-					     delete msg.payload['nodename'];
+						nodeDeviceNm = msg.payload.nodename
+				     		delete msg.payload['nodename'];
 					}
 				}
 			}
 			hubNode.warn('Device Name: ' + nodeDeviceNm)
-		});
-	 
-		if (config.processinput > 0 && nodeDeviceNm !== null) {
-			connection = Wemore.Discover(nodeDeviceNm)
-				.then(function(device) {
-					device.getBinaryState()
-						.then(function(devState){
-							hubNode.warn('Current payload ' + devState)
-						});
-					
-					if (msg.payload.on) {
-						device.setBinaryState(1);
-						device.getBinaryState().then(function(devState){
-							hubNode.warn('On payload ' + devState)
-						});
+
+			if (config.processinput > 0 && nodeDeviceNm !== null) {
+				connection = Wemore.Discover(nodeDeviceNm)
+					.then(function(device) {
+						device.getBinaryState()
+							.then(function(devState){
+								hubNode.warn('Current payload ' + devState)
+							});
+						
+						if (msg.payload.on) {
+							device.setBinaryState(1);
+							device.getBinaryState().then(function(devState){
+								hubNode.warn('On payload ' + devState)
+							});
+							hubNode.status({
+							    fill: 'green',
+							    shape: 'dot',
+							    text: 'on',
+							});
+						} else {
+							device.setBinaryState(0);
+							device.getBinaryState().then(function(devState){
+								hubNode.warn('Off payload ' + devState)
+							});
+							hubNode.status({
+							    fill: 'green',
+							    shape: 'circle',
+							    text: 'off',
+							});
+						}
+					})
+					.fail(function(err) {
+						hubNode.error('Error ' + err)
 						hubNode.status({
-						    fill: 'green',
-						    shape: 'dot',
-						    text: 'on',
+					  		fill: 'red',
+					  		shape: 'ring',
+					  		text: 'Unable to find deviceID ' + deviceid
 						});
-					} else {
-						device.setBinaryState(0);
-						device.getBinaryState().then(function(devState){
-							hubNode.warn('Off payload ' + devState)
-						});
-						hubNode.status({
-						    fill: 'green',
-						    shape: 'circle',
-						    text: 'off',
-						});
-					}
-				})
-				.fail(function(err) {
-					hubNode.error('Error ' + err)
-					hubNode.status({
-					  fill: 'red',
-					  shape: 'ring',
-					  text: 'Unable to find deviceID ' + deviceid
 					});
-				});
 			}
+		});
 	}
 	
 	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
