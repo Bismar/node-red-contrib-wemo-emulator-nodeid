@@ -207,35 +207,35 @@ module.exports = function (RED) {
 					});
 				});
 			}
-		}
+	}
 	
-		RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
-	
-		function formatUUID(id) {
-			if (id === null || id === undefined){return '';}
-			return ('' + id).replace('.', '').trim();
-		}
-	
-		function getDeviceNm(id) {
-			if (id === null || id === undefined) {return '';}
-			
-			RED.nodes.eachNode(function(node) {
-				if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name;}
-			});
-		}
+	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
+
+	function formatUUID(id) {
+		if (id === null || id === undefined){return '';}
+		return ('' + id).replace('.', '').trim();
+	}
+
+	function getDeviceNm(id) {
+		if (id === null || id === undefined) {return '';}
 		
-		function getDevicesNms() {
-			var devices = [];
-			
-			RED.nodes.eachNode(function(node) {
-				if (node.type == 'amazon-echo-device') {
-					devices.push({
-						  id: formatUUID(node.id),
-						  name: node.name
-					});
-				}
-			});
-			
-			return devices;
-		}
+		RED.nodes.eachNode(function(node) {
+			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name;}
+		});
+	}
+	
+	function getDevicesNms() {
+		var devices = [];
+		
+		RED.nodes.eachNode(function(node) {
+			if (node.type == 'amazon-echo-device') {
+				devices.push({
+					  id: formatUUID(node.id),
+					  name: node.name
+				});
+			}
+		});
+		
+		return devices;
+	}
 };
