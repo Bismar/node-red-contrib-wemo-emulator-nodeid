@@ -142,7 +142,7 @@ module.exports = function (RED) {
 	function WemoEmuHubNode(config) {
 		RED.nodes.createNode(this, config);
 		const hubNode = this;
-		hubNode.warn('IP Address: ' + env.get("HOST"))
+		//hubNode.warn('IP Address: ' + env.get("HOST"))
 		hubNode.on('input', function(msg) {
 			var nodeDeviceNm = null;
 			
