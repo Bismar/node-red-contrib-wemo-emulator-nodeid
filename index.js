@@ -165,63 +165,48 @@ module.exports = function (RED) {
 			 }
 		});
 	 
-		if (config.processinput > 0 && nodeDeviceId !== null) {
-			var deviceid = formatUUID(nodeDeviceId);
-			hubNode.warn('Trimmed id ' + deviceid)
-			var meta = {
-				   insert: {
-					 by: 'input',
-					 details: {}
-				   }
-			}
-			     //var deviceAttributes = setDeviceAttributes(deviceid, msg.payload, meta, hubNode.context());
-		     
-			     // Output if
-			     // 'Process and output' OR
-			     // 'Process and output on state change' option is selected
-			     //if (config.processinput == 2 || (config.processinput == 3 && Object.keys(deviceAttributes.meta.changes).length > 0)) {
-			       //payloadHandler(hubNode, deviceid);
-			    // }
-				hubNode.warn('Pre-discover wuth Node Device Name: ' + nodeDeviceNm)
-				
-				connection = Wemore.Discover(nodeDeviceNm)
-					.then(function(device) {
-						hubNode.warn('Success with Payload.On: ' + msg.payload.on)
-						device.getBinaryState()
-							.then(function(devState){
-								hubNode.warn('Current payload ' + devState)
-							});
-						
-						if (msg.payload.on) {
-							device.setBinaryState(1);
-							device.getBinaryState().then(function(devState){
-								hubNode.warn('On payload ' + devState)
-							});
-							hubNode.status({
-							    fill: 'green',
-							    shape: 'dot',
-							    text: 'on',
-							});
-						} else {
-							device.setBinaryState(0);
-							device.getBinaryState().then(function(devState){
-								hubNode.warn('Off payload ' + devState)
-							});
-							hubNode.status({
-							    fill: 'green',
-							    shape: 'circle',
-							    text: 'off',
-							});
-						}
-					})
-					.fail(function(err) {
-						hubNode.error('Error ' + err)
-						hubNode.status({
-						  fill: 'red',
-						  shape: 'ring',
-						  text: 'Unable to find deviceID ' + deviceid
+		if (config.processinput > 0 && nodeDeviceNm !== null) {
+			//var deviceid = formatUUID(nodeDeviceId);
+			hubNode.warn('Device Name: ' + nodeDeviceNm)
+
+			connection = Wemore.Discover(nodeDeviceNm)
+				.then(function(device) {
+					hubNode.warn('Success with Payload.On: ' + msg.payload.on)
+					device.getBinaryState()
+						.then(function(devState){
+							hubNode.warn('Current payload ' + devState)
 						});
+					
+					if (msg.payload.on) {
+						device.setBinaryState(1);
+						device.getBinaryState().then(function(devState){
+							hubNode.warn('On payload ' + devState)
+						});
+						hubNode.status({
+						    fill: 'green',
+						    shape: 'dot',
+						    text: 'on',
+						});
+					} else {
+						device.setBinaryState(0);
+						device.getBinaryState().then(function(devState){
+							hubNode.warn('Off payload ' + devState)
+						});
+						hubNode.status({
+						    fill: 'green',
+						    shape: 'circle',
+						    text: 'off',
+						});
+					}
+				})
+				.fail(function(err) {
+					hubNode.error('Error ' + err)
+					hubNode.status({
+					  fill: 'red',
+					  shape: 'ring',
+					  text: 'Unable to find deviceID ' + deviceid
 					});
+				});
 			}
 		}
 	
