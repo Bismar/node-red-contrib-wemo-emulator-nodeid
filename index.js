@@ -220,9 +220,14 @@ module.exports = function (RED) {
 
 	function getDeviceNm(id) {
 		if (id === null || id === undefined) {return '';}
+		var rtnNm = null
 		
 		RED.nodes.eachNode(function(node) {
-			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name;}
+			node.warn('Test wemo-emulator-nodeid Node Names: ' + node.name)
+			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {
+				rtnNm = node.name
+				return rtnNm;
+			}
 		});
 	}
 	
