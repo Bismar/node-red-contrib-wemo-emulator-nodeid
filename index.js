@@ -55,7 +55,7 @@ module.exports = function (RED) {
 	        RED.nodes.createNode(this, config);
 	     
 	        const node = this;
-	        const globalConfig = { debug: false };
+	        const globalConfig = { debug: true };
 	
 	        const getGlobalConfig = function () {
 	            return _.assign(globalConfig, node.context().global.get('wemo-emulator-nodeid'));
