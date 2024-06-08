@@ -98,41 +98,41 @@ module.exports = function (RED) {
 	                })
 	                .on('on', (_self, sender) => {
 				node.warn('Host IP: ' + connection.host)
-				node.warn('Calling IP: ' + sender.address.substr(8))
+				node.warn('Calling IP: ' + sender.address.substr(7))
 				
-			    	if (connection.host !== sender.address.substr(8)){
+			    	if (connection.host !== sender.address.substr(7)){
 					node.send({
 						topic: config.onTopic,
 						payload: config.onPayload,
 						deviceid: node.id,
 						sender,
 				    	});
+		                   	 node.status({
+			                        fill: 'green',
+			                        shape: 'dot',
+			                        text: 'on',
+		                    	});
+		                    	debug('Turning on');
 				}
-	                   	 node.status({
-		                        fill: 'green',
-		                        shape: 'dot',
-		                        text: 'on',
-	                    	});
-	                    	debug('Turning on');
 	                })
 	                .on('off', (_self, sender) => {
 				node.warn('Host IP: ' + connection.host)
-				node.warn('Calling IP: ' + sender.address.substr(8))
+				node.warn('Calling IP: ' + sender.address.substr(7))
 
-				if (connection.host !== sender.address.substr(8)){
+				if (connection.host !== sender.address.substr(7)){
 		                    	node.send({
 			                        topic: config.offTopic,
 			                        payload: config.offPayload,
 			                        deviceid: node.id,
 			                        sender,
 		                    	});
+		                    	node.status({
+			                        fill: 'green',
+			                        shape: 'circle',
+			                        text: 'off',
+		                    	});
+		                    	debug('Turning off');
 				}
-	                    	node.status({
-		                        fill: 'green',
-		                        shape: 'circle',
-		                        text: 'off',
-	                    	});
-	                    	debug('Turning off');
 	                });
 	        });
 	
