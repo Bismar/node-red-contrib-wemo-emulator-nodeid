@@ -55,7 +55,7 @@ module.exports = function (RED) {
 	        RED.nodes.createNode(this, config);
 	     
 	        const node = this;
-	        const globalConfig = { debug: true };
+	        const globalConfig = { debug: false };
 	
 	        const getGlobalConfig = function () {
 	            return _.assign(globalConfig, node.context().global.get('wemo-emulator-nodeid'));
@@ -157,20 +157,17 @@ module.exports = function (RED) {
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 				       nodeDeviceNm = getDeviceNm(msg.payload.nodeid);
 				       delete msg.payload['nodeid'];
-			    } else {
+			    	} else {
 					if ('nodename' in msg.payload && msg.payload.nodename !== null) {
-						     nodeDeviceNm = msg.payload.nodename;
-						     delete msg.payload['nodename'];
+					     nodeDeviceNm = msg.payload.nodename;
+					     delete msg.payload['nodename'];
 					}
 				}
 			}
-			
 			hubNode.warn('Device Name: ' + nodeDeviceNm)
 		});
 	 
 		if (config.processinput > 0 && nodeDeviceNm !== null) {
-			//var deviceid = formatUUID(nodeDeviceId);
-
 			connection = Wemore.Discover(nodeDeviceNm)
 				.then(function(device) {
 					hubNode.warn('Success with Payload.On: ' + msg.payload.on)
@@ -215,15 +212,15 @@ module.exports = function (RED) {
 		RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
 	
 		function formatUUID(id) {
-			if (id === null || id === undefined){return ''}
+			if (id === null || id === undefined){return '';}
 			return ('' + id).replace('.', '').trim();
 		}
 	
 		function getDeviceNm(id) {
-			if (id === null || id === undefined) {return ''}
+			if (id === null || id === undefined) {return '';}
 			
 			RED.nodes.eachNode(function(node) {
-				if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name}
+				if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name;}
 			});
 		}
 		
