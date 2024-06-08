@@ -144,7 +144,7 @@ module.exports = function (RED) {
 		const hubNode = this;
 		
 		hubNode.on('input', function(msg) {
-			var nodeDeviceId = null;
+			var nodeDeviceNm = null;
 
 			hubNode.status({
 			    fill: 'green',
@@ -153,30 +153,27 @@ module.exports = function (RED) {
 			});
 			
 			if (typeof msg.payload === 'object') {
-			     if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
-			       nodeDeviceId = msg.payload.nodeid	
-			       delete msg.payload['nodeid'];
-			     } else {
-				if ('nodename' in msg.payload && msg.payload.nodename !== null) {
-					 getDevices().forEach(function(device) {
-					   if (msg.payload.nodename == device.name) {
-					     nodeDeviceId = device.id
-					     delete msg.payload['nodename'];
-					   }
-					 });
+				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
+				       nodeDeviceNm = getDeviceNm(msg.payload.nodeid)
+				       delete msg.payload['nodeid'];
+			    } else {
+					if ('nodename' in msg.payload && msg.payload.nodename !== null) {
+						     nodeDeviceNm = msg.payload.nodename;
+						     delete msg.payload['nodename'];
+					}
 				}
-			     }
-			}
+			 }
+		});
 	 
-			if (config.processinput > 0 && nodeDeviceId !== null) {
-				var deviceid = formatUUID(nodeDeviceId);
-				hubNode.warn('Trimmed id ' + deviceid)
-				var meta = {
-				       insert: {
+		if (config.processinput > 0 && nodeDeviceId !== null) {
+			var deviceid = formatUUID(nodeDeviceId);
+			hubNode.warn('Trimmed id ' + deviceid)
+			var meta = {
+				   insert: {
 					 by: 'input',
 					 details: {}
-				       }
-				}
+				   }
+			}
 			     //var deviceAttributes = setDeviceAttributes(deviceid, msg.payload, meta, hubNode.context());
 		     
 			     // Output if
@@ -185,11 +182,9 @@ module.exports = function (RED) {
 			     //if (config.processinput == 2 || (config.processinput == 3 && Object.keys(deviceAttributes.meta.changes).length > 0)) {
 			       //payloadHandler(hubNode, deviceid);
 			    // }
-				hubNode.warn('Pre-discover')	
-				//connection = Wemore.Discover(deviceid)
-				//hubNode.error('By deviceid ' + connection)
-
-				connection = Wemore.Discover('Bathroom Fan')
+				hubNode.warn('Pre-discover wuth Node Device Name: ' + nodeDeviceNm)
+				
+				connection = Wemore.Discover(nodeDeviceNm)
 					.then(function(device) {
 						hubNode.warn('Success with Payload.On: ' + msg.payload.on)
 						device.getBinaryState()
@@ -234,8 +229,30 @@ module.exports = function (RED) {
 	RED.nodes.registerType('wemo-emu-hub', WemoEmuHubNode, {});
 	
 	function formatUUID(id) {
-		if (id === null || id === undefined)
-				return '';
+		if (id === null || id === undefined){return ''}
 		return ('' + id).replace('.', '').trim();
+	}
+
+	function getDeviceNm(id) {
+		if (id === null || id === undefined) {return ''}
+		
+		RED.nodes.eachNode(function(node) {
+			if (node.type == 'wemo-emulator-nodeid' && formatUUID(node.id) == id) {return node.name}
+		});
+	}
+	
+	function getDevicesNms() {
+		var devices = [];
+		
+		RED.nodes.eachNode(function(node) {
+			if (node.type == 'amazon-echo-device') {
+				devices.push({
+					  id: formatUUID(node.id),
+					  name: node.name
+				});
+			}
+		});
+		
+		return devices;
 	}
 };
