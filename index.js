@@ -89,40 +89,42 @@ module.exports = function (RED) {
 	            // {friendlyName: "TV", port: 9001, serial: 'a unique id'}
 	            connection = Wemore.Emulate(config)
 	                .on('listening', function () {
-	                    node.status({
-	                        fill: 'yellow',
-	                        shape: 'dot',
-	                        text: `Listen on ${this.port}`,
-	                    });
+			    	node.status({
+					fill: 'yellow',
+					shape: 'dot',
+					text: `Listen on ${this.port}`,
+			    	});
 	                    debug(`Listening on: ${this.port}`);
 	                })
 	                .on('on', (_self, sender) => {
-	                    node.send({
-	                        topic: config.onTopic,
-	                        payload: config.onPayload,
-	                        deviceid: node.id,
-	                        sender,
-	                    });
-	                    node.status({
-	                        fill: 'green',
-	                        shape: 'dot',
-	                        text: 'on',
-	                    });
-	                    debug('Turning on');
+				node.warn('IP Address: ' + connection.host)
+			    	node.send({
+					topic: config.onTopic,
+					payload: config.onPayload,
+					deviceid: node.id,
+					sender,
+			    	});
+	                   	 node.status({
+		                        fill: 'green',
+		                        shape: 'dot',
+		                        text: 'on',
+	                    	});
+	                    	debug('Turning on');
 	                })
 	                .on('off', (_self, sender) => {
-	                    node.send({
-	                        topic: config.offTopic,
-	                        payload: config.offPayload,
-	                        deviceid: node.id,
-	                        sender,
-	                    });
-	                    node.status({
-	                        fill: 'green',
-	                        shape: 'circle',
-	                        text: 'off',
-	                    });
-	                    debug('Turning off');
+				node.warn('IP Address: ' + connection.host)
+	                    	node.send({
+		                        topic: config.offTopic,
+		                        payload: config.offPayload,
+		                        deviceid: node.id,
+		                        sender,
+	                    	});
+	                    	node.status({
+		                        fill: 'green',
+		                        shape: 'circle',
+		                        text: 'off',
+	                    	});
+	                    	debug('Turning off');
 	                });
 	        });
 	
@@ -176,8 +178,6 @@ module.exports = function (RED) {
 			if (config.processinput > 0 && nodeDeviceNm !== null) {
 				connection = Wemore.Discover(nodeDeviceNm)
 					.then(function(device) {
-						hubNode.warn('IP Address: ' + connection.host)
-						hubNode.warn('IP Address: ' + device.host)
 						device.getBinaryState()
 							.then(function(devState){
 								hubNode.warn('Current payload: ' + devState)
