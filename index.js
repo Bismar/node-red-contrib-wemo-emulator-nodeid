@@ -153,8 +153,9 @@ module.exports = function (RED) {
 			});
 			
 			if (typeof msg.payload === 'object') {
+				hubNode.warn('Device ID: ' + msg.payload.nodeid)
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
-				       nodeDeviceNm = getDeviceNm(msg.payload.nodeid)
+				       nodeDeviceNm = getDeviceNm(msg.payload.nodeid);
 				       delete msg.payload['nodeid'];
 			    } else {
 					if ('nodename' in msg.payload && msg.payload.nodename !== null) {
@@ -162,12 +163,13 @@ module.exports = function (RED) {
 						     delete msg.payload['nodename'];
 					}
 				}
-			 }
+			}
+			
+			hubNode.warn('Device Name: ' + nodeDeviceNm)
 		});
 	 
 		if (config.processinput > 0 && nodeDeviceNm !== null) {
 			//var deviceid = formatUUID(nodeDeviceId);
-			hubNode.warn('Device Name: ' + nodeDeviceNm)
 
 			connection = Wemore.Discover(nodeDeviceNm)
 				.then(function(device) {
