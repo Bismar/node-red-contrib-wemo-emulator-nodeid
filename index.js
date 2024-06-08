@@ -97,8 +97,8 @@ module.exports = function (RED) {
 	                    debug(`Listening on: ${this.port}`);
 	                })
 	                .on('on', (_self, sender) => {
-				node.warn('Host IP: ' + connection.host)
-				node.warn('Calling IP: ' + sender.address.substr(7) + ":" + sender.port)
+				//node.warn('Host IP: ' + connection.host)
+				//node.warn('Calling IP: ' + sender.address.substr(7) + ":" + sender.port)
 				
 			    	if (connection.host !== sender.address.substr(7)){
 					node.send({
@@ -107,17 +107,17 @@ module.exports = function (RED) {
 						deviceid: node.id,
 						sender,
 				    	});
-		                   	 node.status({
-			                        fill: 'green',
-			                        shape: 'dot',
-			                        text: 'on',
-		                    	});
-		                    	debug('Turning on');
 				}
+				 node.status({
+					fill: 'green',
+					shape: 'dot',
+					text: 'on',
+				});
+				debug('Turning on');
 	                })
 	                .on('off', (_self, sender) => {
-				node.warn('Host IP: ' + connection.host)
-				node.warn('Calling IP: ' + sender.address.substr(7) + ":" + sender.port)
+				//node.warn('Host IP: ' + connection.host)
+				//node.warn('Calling IP: ' + sender.address.substr(7) + ":" + sender.port)
 
 				if (connection.host !== sender.address.substr(7)){
 		                    	node.send({
@@ -126,13 +126,13 @@ module.exports = function (RED) {
 			                        deviceid: node.id,
 			                        sender,
 		                    	});
-		                    	node.status({
-			                        fill: 'green',
-			                        shape: 'circle',
-			                        text: 'off',
-		                    	});
-		                    	debug('Turning off');
 				}
+				node.status({
+					fill: 'green',
+					shape: 'circle',
+					text: 'off',
+				});
+				debug('Turning off');
 	                });
 	        });
 	
@@ -163,8 +163,8 @@ module.exports = function (RED) {
 			});
 			
 			if (typeof msg.payload === 'object') {
-				hubNode.warn('Device ID: ' + msg.payload.nodeid)
-				hubNode.warn('Payload.On: ' + msg.payload.on)
+				//hubNode.warn('Device ID: ' + msg.payload.nodeid)
+				//hubNode.warn('Payload.On: ' + msg.payload.on)
 				if ('nodeid' in msg.payload && msg.payload.nodeid !== null) {
 					getDevicesNms().forEach(function(device) {
 						//hubNode.warn('Devices Listing: ' + device.name)
